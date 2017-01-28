@@ -13,6 +13,8 @@ import ChannelStore from 'stores/channel_store.jsx';
 
 import * as Utils from 'utils/utils.jsx';
 
+import CugcBannerView from 'components/cugc_banner_view.jsx';
+
 export default class ChannelView extends React.Component {
     constructor(props) {
         super(props);
@@ -67,6 +69,7 @@ export default class ChannelView extends React.Component {
                 className='app__content'
             >
                 <FileUploadOverlay overlayType='center'/>
+                <CugcBannerView channelId={this.state.channelId} />
                 <ChannelHeader
                     channelId={this.state.channelId}
                 />
