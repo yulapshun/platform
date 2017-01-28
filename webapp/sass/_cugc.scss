@@ -1,0 +1,33 @@
+.cugc-banner-container {
+    padding: 5px 0 0 0;
+    border-bottom: solid 1px grey;
+    background: black;
+    color: white;
+}
+
+.cugc-banner-msg-container {
+    max-height: 70pt;
+    overflow-y: scroll;
+}
+
+.cugc-banner-caret {
+    text-align: center;
+    cursor: pointer;
+}
+
+.cugc-banner-caret-show {
+    background: black;
+    color: white;
+}
+
+.cugc-banner-caret-hide {
+    margin-top: -5px;
+    background: white;
+    color: black;
+}
+
+.cugc-banner-msg {
+    vertical-align: middle;
+    font-size: 11pt;
+    line-height: 16pt;
+}
