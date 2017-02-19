@@ -5,7 +5,9 @@ import $ from 'jquery';
 
 import SearchResults from './search_results.jsx';
 import RhsThread from './rhs_thread.jsx';
+import CugcInfoView from './cugc_info_view.jsx';
 import SearchStore from 'stores/search_store.jsx';
+import CugcStore from 'stores/cugc_store.jsx';
 import PostStore from 'stores/post_store.jsx';
 import UserStore from 'stores/user_store.jsx';
 import PreferenceStore from 'stores/preference_store.jsx';
@@ -27,6 +29,7 @@ export default class SidebarRight extends React.Component {
         this.onPreferenceChange = this.onPreferenceChange.bind(this);
         this.onSelectedChange = this.onSelectedChange.bind(this);
         this.onSearchChange = this.onSearchChange.bind(this);
+        this.onCugcInfoChange = this.onCugcInfoChange.bind(this);
         this.onUserChange = this.onUserChange.bind(this);
         this.onShowSearch = this.onShowSearch.bind(this);
         this.onShrink = this.onShrink.bind(this);
@@ -38,6 +41,8 @@ export default class SidebarRight extends React.Component {
             searchVisible: SearchStore.getSearchResults() !== null,
             isMentionSearch: SearchStore.getIsMentionSearch(),
             isFlaggedPosts: SearchStore.getIsFlaggedPosts(),
+            cugcInfoVisible: CugcStore.getCugcInfo() !== null,
+            cugcInfo: CugcStore.getCugcInfo(),
             postRightVisible: Boolean(PostStore.getSelectedPost()),
             expanded: false,
             fromSearch: false,
@@ -52,6 +57,7 @@ export default class SidebarRight extends React.Component {
         SearchStore.addShowSearchListener(this.onShowSearch);
         UserStore.addChangeListener(this.onUserChange);
         PreferenceStore.addChangeListener(this.onPreferenceChange);
+        CugcStore.addChangeListener(this.onCugcInfoChange);
         this.doStrangeThings();
     }
 
@@ -61,6 +67,7 @@ export default class SidebarRight extends React.Component {
         SearchStore.removeShowSearchListener(this.onShowSearch);
         UserStore.removeChangeListener(this.onUserChange);
         PreferenceStore.removeChangeListener(this.onPreferenceChange);
+        CugcStore.removeChangeListener(this.onCugcInfoChange);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -68,8 +75,8 @@ export default class SidebarRight extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState) {
-        const isOpen = this.state.searchVisible || this.state.postRightVisible;
-        const willOpen = nextState.searchVisible || nextState.postRightVisible;
+        const isOpen = this.state.searchVisible || this.state.postRightVisible  || this.state.cugcInfoVisible;
+        const willOpen = nextState.searchVisible || nextState.postRightVisible  || nextState.cugcInfoVisible;
 
         if (isOpen !== willOpen) {
             PostStore.jumpPostsViewSidebarOpen();
@@ -83,6 +90,7 @@ export default class SidebarRight extends React.Component {
     }
 
     doStrangeThings() {
+        console.log("hihi.strange");
         // We should have a better way to do this stuff
         // Hence the function name.
         $('.app__body .inner-wrap').removeClass('.move--right');
@@ -92,7 +100,7 @@ export default class SidebarRight extends React.Component {
         $('.app__body .sidebar--right').addClass('move--left');
 
         //$('.sidebar--right').prepend('<div class="sidebar__overlay"></div>');
-        if (!this.state.searchVisible && !this.state.postRightVisible) {
+        if (!this.state.searchVisible && !this.state.postRightVisible && !this.state.cugcInfoVisible) {
             $('.app__body .inner-wrap').removeClass('move--left').removeClass('move--right');
             $('.app__body .sidebar--right').removeClass('move--left');
             return (
@@ -109,7 +117,7 @@ export default class SidebarRight extends React.Component {
     }
 
     componentDidUpdate() {
-        const isOpen = this.state.searchVisible || this.state.postRightVisible;
+        const isOpen = this.state.searchVisible || this.state.postRightVisible || this.state.cugcInfoVisible;
         WebrtcStore.emitRhsChanged(isOpen);
         this.doStrangeThings();
     }
@@ -139,10 +147,19 @@ export default class SidebarRight extends React.Component {
     }
 
     onSearchChange() {
+        console.log("hihi.searchVisible: ", SearchStore.getSearchResults() !== null);
         this.setState({
             searchVisible: SearchStore.getSearchResults() !== null,
             isMentionSearch: SearchStore.getIsMentionSearch(),
             isFlaggedPosts: SearchStore.getIsFlaggedPosts()
+        });
+    }
+
+    onCugcInfoChange() {
+        console.log("hihi.cugcInfoVisible: ", CugcStore.getCugcInfo() !== null);
+        this.setState({
+            cugcInfoVisible: CugcStore.getCugcInfo() !== null,
+            cugcInfo: CugcStore.getCugcInfo()
         });
     }
 
@@ -190,6 +207,14 @@ export default class SidebarRight extends React.Component {
                     isWebrtc={WebrtcStore.isBusy()}
                     isMentionSearch={this.state.isMentionSearch}
                     currentUser={this.state.currentUser}
+                    useMilitaryTime={this.state.useMilitaryTime}
+                    toggleSize={this.toggleSize}
+                    shrink={this.onShrink}
+                />
+            );
+        } else if (this.state.cugcInfoVisible) {
+            content = (
+                <CugcInfoView
                     useMilitaryTime={this.state.useMilitaryTime}
                     toggleSize={this.toggleSize}
                     shrink={this.onShrink}

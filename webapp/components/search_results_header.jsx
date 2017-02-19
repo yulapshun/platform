@@ -4,6 +4,7 @@
 import Constants from 'utils/constants.jsx';
 import {Tooltip, OverlayTrigger} from 'react-bootstrap';
 import * as GlobalActions from 'actions/global_actions.jsx';
+import {hideCugcInfoView} from 'actions/cugc_actions.jsx';
 
 import {FormattedMessage} from 'react-intl';
 
@@ -21,6 +22,7 @@ export default class SearchResultsHeader extends React.Component {
         e.preventDefault();
 
         GlobalActions.toggleSideBarAction(false);
+        hideCugcInfoView();
 
         this.props.shrink();
     }

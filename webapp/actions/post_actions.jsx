@@ -100,7 +100,7 @@ export function getFlaggedPosts() {
                 do_search: false,
                 is_mention_search: false
             });
-
+            // This one
             AppDispatcher.handleServerAction({
                 type: ActionTypes.RECEIVED_SEARCH,
                 results: data,

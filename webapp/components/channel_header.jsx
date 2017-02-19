@@ -20,6 +20,7 @@ import ChannelStore from 'stores/channel_store.jsx';
 import UserStore from 'stores/user_store.jsx';
 import TeamStore from 'stores/team_store.jsx';
 import SearchStore from 'stores/search_store.jsx';
+import CugcStore from 'stores/cugc_store.jsx';
 import PreferenceStore from 'stores/preference_store.jsx';
 import WebrtcStore from 'stores/webrtc_store.jsx';
 
@@ -32,6 +33,7 @@ import * as TextFormatting from 'utils/text_formatting.jsx';
 import Client from 'client/web_client.jsx';
 import * as AsyncClient from 'utils/async_client.jsx';
 import {getFlaggedPosts} from 'actions/post_actions.jsx';
+import {getAllCugcInfo} from 'actions/cugc_actions.jsx';
 
 import {Constants, Preferences, UserStatuses} from 'utils/constants.jsx';
 
@@ -53,6 +55,7 @@ export default class ChannelHeader extends React.Component {
         this.hideRenameChannelModal = this.hideRenameChannelModal.bind(this);
         this.handleShortcut = this.handleShortcut.bind(this);
         this.getFlagged = this.getFlagged.bind(this);
+        this.getCugcInfo = this.getCugcInfo.bind(this);
         this.initWebrtc = this.initWebrtc.bind(this);
         this.onBusy = this.onBusy.bind(this);
 
@@ -67,6 +70,7 @@ export default class ChannelHeader extends React.Component {
         const channel = ChannelStore.get(this.props.channelId);
         const stats = ChannelStore.getStats(this.props.channelId);
         const users = UserStore.getProfileListInChannel(this.props.channelId);
+        const cugcInfo = CugcStore.getCugcInfo();
 
         let otherUserId = null;
         if (channel && channel.type === 'D') {
@@ -77,6 +81,7 @@ export default class ChannelHeader extends React.Component {
             channel,
             memberChannel: ChannelStore.getMyMember(this.props.channelId),
             users,
+            cugcInfo,
             userCount: stats.member_count,
             currentUser: UserStore.getCurrentUser(),
             otherUserId,
@@ -101,6 +106,7 @@ export default class ChannelHeader extends React.Component {
         ChannelStore.addChangeListener(this.onListenerChange);
         ChannelStore.addStatsChangeListener(this.onListenerChange);
         SearchStore.addSearchChangeListener(this.onListenerChange);
+        CugcStore.addChangeListener(this.onListenerChange);
         PreferenceStore.addChangeListener(this.onListenerChange);
         UserStore.addInChannelChangeListener(this.onListenerChange);
         UserStore.addStatusesChangeListener(this.onListenerChange);
@@ -114,6 +120,7 @@ export default class ChannelHeader extends React.Component {
         ChannelStore.removeChangeListener(this.onListenerChange);
         ChannelStore.removeStatsChangeListener(this.onListenerChange);
         SearchStore.removeSearchChangeListener(this.onListenerChange);
+        CugcStore.removeChangeListener(this.onListenerChange);
         PreferenceStore.removeChangeListener(this.onListenerChange);
         UserStore.removeInChannelChangeListener(this.onListenerChange);
         UserStore.removeStatusesChangeListener(this.onListenerChange);
@@ -127,6 +134,7 @@ export default class ChannelHeader extends React.Component {
     }
 
     onListenerChange() {
+        console.log("hihi.state: ", this.getStateFromStores());
         this.setState(this.getStateFromStores());
     }
 
@@ -176,6 +184,13 @@ export default class ChannelHeader extends React.Component {
         } else {
             getFlaggedPosts();
         }
+    }
+
+    getCugcInfo(e) {
+        e.preventDefault();
+        console.log("This is channel");
+        getAllCugcInfo();
+        // do nothing
     }
 
     handleShortcut(e) {
@@ -237,6 +252,15 @@ export default class ChannelHeader extends React.Component {
                 <FormattedMessage
                     id='channel_header.flagged'
                     defaultMessage='Flagged Posts'
+                />
+            </Tooltip>
+        );
+
+        const cugcInfoViewTooltip = (
+            <Tooltip id='flaggedTooltip'>
+                <FormattedMessage
+                    id='channel_header.info'
+                    defaultMessage='Info'
                 />
             </Tooltip>
         );
@@ -738,6 +762,23 @@ export default class ChannelHeader extends React.Component {
                                                 className='icon icon__flag'
                                                 dangerouslySetInnerHTML={{__html: flagIcon}}
                                             />
+                                        </a>
+                                    </OverlayTrigger>
+                                </div>
+                            </th>
+                            <th>
+                                <div className='dropdown channel-header__links search-btns'>
+                                    <OverlayTrigger
+                                        delayShow={Constants.OVERLAY_TIME_DELAY}
+                                        placement='bottom'
+                                        overlay={cugcInfoViewTooltip}
+                                    >
+                                        <a
+                                            href='#'
+                                            type='button'
+                                            onClick={this.getCugcInfo}
+                                        >
+                                            {'I'}
                                         </a>
                                     </OverlayTrigger>
                                 </div>

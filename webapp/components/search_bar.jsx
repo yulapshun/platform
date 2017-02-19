@@ -16,6 +16,7 @@ import SearchUserProvider from './suggestion/search_user_provider.jsx';
 import * as Utils from 'utils/utils.jsx';
 import Constants from 'utils/constants.jsx';
 import {loadProfilesForPosts, getFlaggedPosts} from 'actions/post_actions.jsx';
+import {getAllCugcInfo} from 'actions/cugc_actions.jsx';
 
 import {FormattedMessage, FormattedHTMLMessage} from 'react-intl';
 
@@ -171,6 +172,13 @@ export default class SearchBar extends React.Component {
         }
     }
 
+    getCugcInfo(e) {
+        e.preventDefault();
+        console.log("This is search");
+        getAllCugcInfo();
+        // do nothing
+    }
+
     render() {
         const flagIcon = Constants.FLAG_ICON_SVG;
         var isSearching = null;
@@ -201,8 +209,18 @@ export default class SearchBar extends React.Component {
             </Tooltip>
         );
 
+        const cugcInfoViewTooltip = (
+            <Tooltip id='flaggedTooltip'>
+                <FormattedMessage
+                    id='channel_header.info'
+                    defaultMessage='Info'
+                />
+            </Tooltip>
+        );
+
         let mentionBtn;
         let flagBtn;
+        let cugcInfoBtn;
         if (this.props.showMentionFlagBtns) {
             mentionBtn = (
                 <div
@@ -244,6 +262,27 @@ export default class SearchBar extends React.Component {
                                 className='icon icon__flag'
                                 dangerouslySetInnerHTML={{__html: flagIcon}}
                             />
+                        </a>
+                    </OverlayTrigger>
+                </div>
+            );
+
+            cugcInfoBtn = (
+                <div
+                    className='dropdown channel-header__links'
+                    style={{float: 'left', marginTop: '1px'}}
+                >
+                    <OverlayTrigger
+                        delayShow={Constants.OVERLAY_TIME_DELAY}
+                        placement='bottom'
+                        overlay={cugcInfoViewTooltip}
+                    >
+                        <a
+                            href='#'
+                            type='button'
+                            onClick={this.getCugcInfo}
+                        >
+                            {'I'}
                         </a>
                     </OverlayTrigger>
                 </div>
@@ -302,6 +341,7 @@ export default class SearchBar extends React.Component {
 
                 {mentionBtn}
                 {flagBtn}
+                {cugcInfoBtn}
             </div>
         );
     }
