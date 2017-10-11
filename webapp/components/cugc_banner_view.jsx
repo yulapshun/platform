@@ -1,5 +1,5 @@
 import React from 'react';
-import Client from 'client/web_client.jsx';
+import * as ChannelActions from 'actions/channel_actions.jsx';
 import {formatText} from 'utils/text_formatting.jsx';
 
 export default class CugcBannerView extends React.Component {
@@ -14,7 +14,7 @@ export default class CugcBannerView extends React.Component {
     }
 
     componentWillMount() {
-        Client.executeCommand(
+        ChannelActions.executeCommand(
             '/banner',
             {channel_id: this.props.channelId},
             (resp) => {
